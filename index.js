@@ -1,31 +1,45 @@
-const { response } = require("express");
+
 const express = require("express");
-const { request } = require("http");
 const app = express();
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const routesUrls = require('./routes/auth.js');
+const cors = require('cors')
+const cookieParser = require('cookie-parser')
+
+
+dotenv.config();
 
 const PORT = 8000;
 
-const user = [
-  {
-    name : "siva",
-    email: "sivaram@gmail.com"
-  },
-  {
-    name : "prasanna",
-    email: "prasanna@gmail.com"
-  },
-  {
-    name : "rahul",
-    email: "rahul@gmail.com"
-  },
-];
 
-app.get("/", (request, response)=> {
-  response.send("hello world")
+//db connection
+mongoose.connect(process.env.MONGO_URL, ()=> console.log("Database Connected"));
+
+
+
+//middlewares
+app.use(express.json())
+app.use(cookieParser())
+app.use(cors())
+app.use('/api', routesUrls)
+
+
+app.get('/', (request , response)=> {
+  return response.send("Welcome");
 })
 
-app.get("/users" , (request , response)=>{
-  response.send(user);
-})
+
+
+
+// const user = [
+//   {
+//     "firstname" : "siva",
+//     "lastname" : "ram",
+//     "email": "sivaram@gmail.com",
+//     "password": "password123",
+//   }
+// ]; 
+
 
 app.listen(PORT, ()=> console.log("App is started in", PORT));
